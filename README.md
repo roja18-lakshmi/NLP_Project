@@ -1,58 +1,147 @@
-# NLP_Project
-# Bias Detector for English Text
+# Bias Detector for English Text using RoBERTa and LoRA
 
-A Natural Language Processing (NLP) project that automatically detects bias in English text using a fine-tuned **RoBERTa** model with **LoRA (Low-Rank Adaptation)**. The system classifies text into one of four categories: **Gender Bias, Racial Bias, Political Bias,** or **No Bias**.
+A Natural Language Processing (NLP) project that detects bias in English text using a fine-tuned **RoBERTa** model with **LoRA (Low-Rank Adaptation)**. The model classifies text into one of four categories: **Gender Bias**, **Racial Bias**, **Political Bias**, or **No Bias**.
 
-## Project Overview
+---
 
-Bias in online content can influence opinions, reinforce stereotypes, and spread misinformation. This project aims to automatically identify different types of bias in English text such as news articles, tweets, and paragraphs using a transformer-based deep learning model.
+## Overview
+
+Bias in online content can influence opinions, reinforce stereotypes, and spread misinformation. This project presents an automated bias detection system that identifies different types of bias in English text such as news articles, tweets, and paragraphs.
+
+The project uses the **RoBERTa-base** transformer model along with **LoRA (Low-Rank Adaptation)** for efficient fine-tuning, significantly reducing the number of trainable parameters while maintaining strong performance.
+
+---
 
 ## Features
 
-* Detects multiple types of bias in English text
-* Fine-tuned **RoBERTa-base** model for sequence classification
-* Uses **LoRA (Low-Rank Adaptation)** for parameter-efficient fine-tuning
+* Detects bias in English text
 * Four-class classification:
 
   * Gender Bias
   * Racial Bias
   * Political Bias
   * No Bias
+* RoBERTa-base transformer model
+* LoRA-based parameter-efficient fine-tuning
+* Developed using Google Colab
+* Comparison between LoRA fine-tuning and training only the classification head
 
-## Example
-
-**Input**
-
-> Women are naturally bad at coding.
-
-**Output**
-
-```
-Predicted Bias: Gender Bias
-Confidence:
-Gender Bias   : 98.53%
-Political Bias: 1.43%
-No Bias       : 0.03%
-Racial Bias   : 0.01%
-```
+---
 
 ## Dataset
 
-This project uses the **Media Bias (MBIB)** dataset from Hugging Face.
+The project uses the **Media Bias (MBIB)** dataset from Hugging Face.
 
-The dataset contains English text collected from news articles, tweets, and other sources and is divided into:
+The dataset contains English text collected from:
 
-* Training Set: 72%
-* Validation Set: 8%
-* Test Set: 20%
+* News articles
+* Tweets
+* Other written content
+
+Dataset split:
+
+* **Training Set:** 72%
+* **Validation Set:** 8%
+* **Test Set:** 20%
+
+---
 
 ## Model Architecture
 
-* Pretrained **RoBERTa-base**
-* Byte Pair Encoding (BPE) Tokenizer
-* LoRA adapters applied to the attention Query and Value matrices
-* Sequence Classification Head
-* Cross-Entropy Loss
+The model consists of the following stages:
+
+1. **Tokenization**
+
+   * RoBERTa tokenizer
+   * Byte Pair Encoding (BPE)
+   * Padding and truncation to a sequence length of 128
+
+2. **Transformer Encoder**
+
+   * Pretrained RoBERTa-base model
+   * Produces contextual embeddings of hidden size 768
+
+3. **LoRA Fine-Tuning**
+
+   * Applied to the Query and Value attention matrices
+   * Remaining RoBERTa parameters remain frozen
+   * Classification head remains trainable
+
+4. **Classification Layer**
+
+   * Fully connected layer
+   * Softmax activation for four-class prediction
+
+5. **Loss Function**
+
+   * Cross-Entropy Loss
+
+---
+
+## Performance Comparison
+
+### 1. RoBERTa + LoRA
+
+| Metric    |      Value |
+| --------- | ---------: |
+| Accuracy  | **76.09%** |
+| Precision | **72.81%** |
+| Recall    | **76.09%** |
+| F1 Score  | **70.43%** |
+
+Trainable Parameters:
+
+* **888,580**
+* Only **0.7078%** of the total model parameters were trained.
+
+---
+
+### 2. Training Only the Classification Head
+
+| Metric    |      Value |
+| --------- | ---------: |
+| Accuracy  | **71.74%** |
+| Precision | **60.39%** |
+| Recall    | **71.74%** |
+| F1 Score  | **64.83%** |
+
+Trainable Parameters:
+
+* **593,668**
+* Only **0.4763%** of the total model parameters were trained.
+
+---
+
+## Results
+
+The experimental results demonstrate that applying **LoRA** to the Query and Value attention matrices improves overall classification performance compared to training only the classification head.
+
+The LoRA-based model achieved higher Accuracy, Precision, Recall, and F1-score while requiring only a small percentage of the model parameters to be updated during fine-tuning.
+
+---
+
+## Example Prediction
+
+### Input
+
+```text
+Women are naturally bad at coding.
+```
+
+### Output
+
+```text
+Predicted Bias : Gender Bias
+
+Probabilities
+
+No Bias        : 0.00008
+Gender Bias    : 0.98535
+Political Bias : 0.01429
+Racial Bias    : 0.00027
+```
+
+---
 
 ## Technologies Used
 
@@ -65,21 +154,13 @@ The dataset contains English text collected from news articles, tweets, and othe
 * Pandas
 * Matplotlib
 
-## Performance
-
-Evaluation Results:
-
-| Metric    |      Score |
-| --------- | ---------: |
-| Accuracy  | **76.36%** |
-| Precision | **73.71%** |
-| Recall    | **76.36%** |
-| F1 Score  | **71.24%** |
+---
 
 ## Repository Structure
 
-```
-.
+```text
+Bias-Detector-for-English-Text/
+│
 ├── README.md
 ├── nlp.ipynb
 ├── config.json
@@ -88,8 +169,11 @@ Evaluation Results:
 ├── adapter_config.json
 ├── adapter_model.safetensors
 ├── model.safetensors
-└── LICENSE
+├── LICENSE
+└── images/
 ```
+
+---
 
 ## Installation
 
@@ -97,28 +181,39 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/your-username/Bias-Detector-for-English-Text.git
+```
+
+Move into the project directory:
+
+```bash
 cd Bias-Detector-for-English-Text
 ```
 
-Install the required packages:
+Install the required libraries:
 
 ```bash
 pip install transformers peft datasets torch numpy pandas matplotlib
 ```
 
+---
+
 ## Usage
 
-1. Open `nlp.ipynb` in Google Colab or Jupyter Notebook.
+1. Open **nlp.ipynb** using Google Colab or Jupyter Notebook.
 2. Install the required dependencies.
-3. Load the pretrained model and tokenizer.
-4. Run the notebook to train or predict bias in English text.
+3. Load the pretrained tokenizer and model.
+4. Run the notebook to train the model or predict bias in English text.
 
-## Future Improvements
+---
 
-* Improve classification accuracy with additional fine-tuning.
+## Future Work
+
+* Improve classification accuracy using larger datasets.
 * Support multilingual bias detection.
-* Deploy the model as a web application using Streamlit or Flask.
-* Add explainability techniques such as attention visualization.
+* Deploy the model as a web application.
+* Provide explainable predictions using attention visualization techniques.
+
+---
 
 ## References
 
@@ -126,7 +221,10 @@ pip install transformers peft datasets torch numpy pandas matplotlib
 * Hugging Face Transformers
 * PEFT (LoRA)
 * Media Bias (MBIB) Dataset
-* *Attention Is All You Need* (Vaswani et al., 2017)
+* *Attention Is All You Need* – Vaswani et al., 2017
+* *Speech and Language Processing* – Daniel Jurafsky
+
+---
 
 ## Author
 
@@ -135,3 +233,7 @@ pip install transformers peft datasets torch numpy pandas matplotlib
 B.Tech in Computer Science and Engineering
 
 National Institute of Technology Andhra Pradesh
+
+---
+
+⭐ If you found this project useful, consider giving it a star.
