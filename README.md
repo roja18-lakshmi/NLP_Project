@@ -196,6 +196,14 @@ pip install transformers peft datasets torch numpy pandas matplotlib
 ```
 
 ---
+## Model Weights
+
+The complete model weights (`model.safetensors`) are not included in this repository because the file exceeds GitHub's file size limit.
+
+To use the model:
+
+- Train the model using `nlp.ipynb`, or
+- Download the model weights from the provided link (if available).
 
 ## Usage
 
